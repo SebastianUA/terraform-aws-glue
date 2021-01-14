@@ -68,10 +68,7 @@ module "glue" {
 
     ]
 
-
-    storage_descriptor_ser_de_info  = []
-    storage_descriptor_sort_columns = []
-    storage_descriptor_skewed_info  = [
+    storage_descriptor_ser_de_info  = [
         {
             ser_de_info_name                  = "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
             ser_de_info_serialization_library = "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
@@ -79,7 +76,8 @@ module "glue" {
         }
 
     ]
-
+    storage_descriptor_sort_columns = []
+    storage_descriptor_skewed_info  = []
 
     # AWS Glue connection
     enable_glue_connection                                  = true
@@ -222,8 +220,10 @@ module "glue" {
 
 ## Module Output Variables
 ----------------------
+- `glue_catalog_database_arn` - Amazon Resource Name (ARN) for glue catalog database
 - `glue_catalog_database_id` - ID for glue catalog database
 - `glue_catalog_database_name` - Name for glue catalog database
+- `glue_catalog_table_arn` - Amazon Resource Name (ARN) for glue catalog table
 - `glue_catalog_table_id` - ID for glue catalog table
 - `glue_catalog_table_name` - Name for glue catalog table
 - `glue_classifier_id` - Name of the classifier
