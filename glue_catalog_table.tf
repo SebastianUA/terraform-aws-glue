@@ -21,6 +21,8 @@ resource "aws_glue_catalog_table" "glue_catalog_table" {
         for_each = var.glue_catalog_table_partition_keys
         content {
             name    = lookup(partition_keys.value, "name", null)
+            type    = lookup(partition_keys.value, "type", null)
+            comment = lookup(partition_keys.value, "comment", null)
         }
     }
 
