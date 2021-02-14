@@ -14,99 +14,122 @@ Import the module and retrieve with ```terraform get``` or ```terraform get --up
 # MAINTAINER Vitaliy Natarov "vitaliy.natarov@yahoo.com"
 #
 terraform {
-    required_version = "~> 0.12.12"
+  required_version = "~> 0.13"
 }
 
 provider "aws" {
-    region                  = "us-east-1"
-    shared_credentials_file = pathexpand("~/.aws/credentials")
+  region                  = "us-east-1"
+  shared_credentials_file = pathexpand("~/.aws/credentials")
 }
 
 module "glue" {
-    source                                                  = "../../modules/glue"
-    name                                                    = "TEST"
-    environment                                             = "stage"
+  source      = "../../modules/glue"
+  name        = "TEST"
+  environment = "stage"
 
-    # AWS Glue catalog DB
-    enable_glue_catalog_database                            = true
-    glue_catalog_database_name                              = "test-glue-db-test"
-    glue_catalog_database_parameters                        = null
+  # AWS Glue catalog DB
+  enable_glue_catalog_database     = true
+  glue_catalog_database_name       = "test-glue-db-test"
+  glue_catalog_database_parameters = null
 
-    # AWS Glue catalog table
-    enable_glue_catalog_table                               = true
-    glue_catalog_table_name                                 = "test-glue-table-test"
-    glue_catalog_table_description                          = "Those resources are managed by Terraform. Created by Vitaliy Natarov"
-    glue_catalog_table_table_type                           = "EXTERNAL_TABLE"
-    glue_catalog_table_parameters                           = {
-        "sizeKey"                           = 493378
-        "tmp"                               = "none"
-        "test"                              = "yes"
-        "classification"                    = "csv"
+  # AWS Glue catalog table
+  enable_glue_catalog_table      = true
+  glue_catalog_table_name        = "test-glue-table-test"
+  glue_catalog_table_description = "Those resources are managed by Terraform. Created by Vitaliy Natarov"
+  glue_catalog_table_table_type  = "EXTERNAL_TABLE"
+  glue_catalog_table_parameters = {
+    "sizeKey"        = 493378
+    "tmp"            = "none"
+    "test"           = "yes"
+    "classification" = "csv"
+  }
+
+
+  storage_descriptor_location      = "s3://my-test-bucket/test/"
+  storage_descriptor_input_format  = "org.apache.hadoop.mapred.TextInputFormat"
+  storage_descriptor_output_format = "org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat"
+
+  storage_descriptor_columns = [
+    {
+      columns_name    = "oid"
+      columns_type    = "double"
+      columns_comment = "oid"
+    },
+    {
+      columns_name    = "oid2"
+      columns_type    = "double"
+      columns_comment = "oid2"
+    },
+    {
+      columns_name    = "oid3"
+      columns_type    = "double"
+      columns_comment = "oid3"
+    },
+
+  ]
+
+  storage_descriptor_ser_de_info  = [
+    {
+      ser_de_info_name                  = "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
+      ser_de_info_serialization_library = "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
+      ser_de_info_parameters            = map("field.delim", ",")
+    }
+  ]
+  storage_descriptor_skewed_info = [
+    {
+      ser_de_info_name                  = "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
+      ser_de_info_serialization_library = "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
+      ser_de_info_parameters            = map("field.delim", ",")
     }
 
+  ]
 
-    storage_descriptor_location      = "s3://my-test-bucket/test/"
-    storage_descriptor_input_format  = "org.apache.hadoop.mapred.TextInputFormat"
-    storage_descriptor_output_format = "org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat"
+  storage_descriptor_sort_columns = []
 
-    storage_descriptor_columns       = [
-        {
-            columns_name    = "oid"
-            columns_type    = "double"
-            columns_comment = "oid"
-        },
-        {
-            columns_name    = "oid2"
-            columns_type    = "double"
-            columns_comment = "oid2"
-        },
-        {
-            columns_name    = "oid3"
-            columns_type    = "double"
-            columns_comment = "oid3"
-        },
+  # AWS Glue connection
+  enable_glue_connection = true
+  glue_connection_connection_properties = {
+    JDBC_CONNECTION_URL = "jdbc:mysql://aws_rds_cluster.example.endpoint/exampledatabase"
+    PASSWORD            = "examplepassword"
+    USERNAME            = "exampleusername"
+  }
 
-    ]
+  #glue_connection_physical_connection_requirements        = [{
+  #    availability_zone       = "zone_here"
+  #    security_group_id_list  = []
+  #    subnet_id               = "subnet_here"
+  #}]
 
-    storage_descriptor_ser_de_info  = [
-        {
-            ser_de_info_name                  = "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
-            ser_de_info_serialization_library = "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
-            ser_de_info_parameters            = map("field.delim", ",")
-        }
+  enable_glue_crawler = true
+  glue_crawler_name   = ""
+  glue_crawler_role   = "arn:aws:iam::167127734783:role/admin-role"
 
-    ]
-    storage_descriptor_sort_columns = []
-    storage_descriptor_skewed_info  = []
+  enable_glue_security_configuration = false
+  glue_security_configuration_name   = ""
+  glue_crawler_s3_target = [{
+    path       = "s3://my-bucket/crowler"
+    exclusions = []
+  }]
 
-    # AWS Glue connection
-    enable_glue_connection                                  = true
-    glue_connection_connection_properties                   = {
-        JDBC_CONNECTION_URL = "jdbc:mysql://aws_rds_cluster.example.endpoint/exampledatabase"
-        PASSWORD            = "examplepassword"
-        USERNAME            = "exampleusername"
-    }
+  enable_glue_trigger = true
+  glue_trigger_name   = ""
 
-    enable_glue_crawler                                     = true
-    glue_crawler_name                                       = ""
-    glue_crawler_role                                       = "arn:aws:iam::167127734783:role/emr-service-role"
+  enable_glue_job                 = true
+  glue_job_name                   = ""
+  glue_job_role_arn               = "arn:aws:iam::167127734783:role/admin-role"
+  glue_job_additional_connections = []
+  glue_job_execution_property = [{
+    max_concurrent_runs = 2
+  }]
 
-    #glue_crawler_catalog_target                            = map("database_name", "")
-    #glue_crawler_schema_change_policy                      = map("delete_behavior", "LOG", "update_behavior", "LOG")
+  glue_job_command_script_location = "s3//test-bucket/jobs"
+  glue_job_command_name            = null
 
-    enable_glue_security_configuration                      = true
-    glue_security_configuration_name                        = ""
-
-
-    enable_glue_trigger                                     = true
-    glue_trigger_name                                       = ""
-
-
-    tags = map(
-        "Env", "stage",
-        "Orchestration", "Terraform",
-        "Createdby", "Vitalii Natarov"
-    )
+  tags = map(
+    "Env", "stage",
+    "Orchestration", "Terraform",
+    "Createdby", "Vitalii Natarov"
+  )
 }
 ```
 
@@ -194,6 +217,7 @@ module "glue" {
 - `glue_job_command_python_version` - description (`default = null`)
 - `glue_job_description` - (Optional) Description of the job. (`default = null`)
 - `glue_job_connections` - (Optional) The list of connections used for this job. (`default = null`)
+- `glue_job_additional_connections` - (Optional) The list of connections used for the job. (`default = []`)
 - `glue_job_default_arguments` - (Optional) The map of default arguments for this job. You can specify arguments here that your own job-execution script consumes, as well as arguments that AWS Glue itself consumes. For information about how to specify and consume your own Job arguments, see the Calling AWS Glue APIs in Python topic in the developer guide. For information about the key-value pairs that AWS Glue consumes to set up your job, see the Special Parameters Used by AWS Glue topic in the developer guide. (`default = {'--job-language': 'python'}`)
 - `glue_job_execution_property` - (Optional) Execution property of the job. (`default = []`)
 - `glue_job_glue_version` - (Optional) The version of glue to use, for example '1.0'. For information about available versions, see the AWS Glue Release Notes. (`default = null`)
@@ -220,10 +244,10 @@ module "glue" {
 
 ## Module Output Variables
 ----------------------
-- `glue_catalog_database_arn` - Amazon Resource Name (ARN) for glue catalog database
+- `glue_catalog_database_arn` - ARN for glue catalog database
 - `glue_catalog_database_id` - ID for glue catalog database
 - `glue_catalog_database_name` - Name for glue catalog database
-- `glue_catalog_table_arn` - Amazon Resource Name (ARN) for glue catalog table
+- `glue_catalog_table_arn` - ARN for glue catalog table
 - `glue_catalog_table_id` - ID for glue catalog table
 - `glue_catalog_table_name` - Name for glue catalog table
 - `glue_classifier_id` - Name of the classifier

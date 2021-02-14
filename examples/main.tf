@@ -56,9 +56,13 @@ module "glue" {
 
   ]
 
-
-  storage_descriptor_ser_de_info  = []
-  storage_descriptor_sort_columns = []
+  storage_descriptor_ser_de_info = [
+    {
+      ser_de_info_name                  = "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
+      ser_de_info_serialization_library = "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
+      ser_de_info_parameters            = map("field.delim", ",")
+    }
+  ]
   storage_descriptor_skewed_info = [
     {
       ser_de_info_name                  = "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
@@ -68,6 +72,7 @@ module "glue" {
 
   ]
 
+  storage_descriptor_sort_columns = []
 
   # AWS Glue connection
   enable_glue_connection = true
@@ -85,7 +90,7 @@ module "glue" {
 
   enable_glue_crawler = true
   glue_crawler_name   = ""
-  glue_crawler_role   = "arn:aws:iam::666666666666:role/admin-role"
+  glue_crawler_role   = "arn:aws:iam::167127734783:role/admin-role"
 
   enable_glue_security_configuration = false
   glue_security_configuration_name   = ""
@@ -99,7 +104,7 @@ module "glue" {
 
   enable_glue_job                 = true
   glue_job_name                   = ""
-  glue_job_role_arn               = "arn:aws:iam::666666666666:role/admin-role"
+  glue_job_role_arn               = "arn:aws:iam::167127734783:role/admin-role"
   glue_job_additional_connections = []
   glue_job_execution_property = [{
     max_concurrent_runs = 2
