@@ -10,7 +10,7 @@ A terraform module for making Glue.
 Import the module and retrieve with ```terraform get``` or ```terraform get --update```. Adding a module resource to your template, e.g. `main.tf`:
 
 ```
-#
+##
 # MAINTAINER Vitaliy Natarov "vitaliy.natarov@yahoo.com"
 #
 terraform {
@@ -20,6 +20,10 @@ terraform {
 provider "aws" {
   region                  = "us-east-1"
   shared_credentials_file = pathexpand("~/.aws/credentials")
+}
+
+data "aws_iam_role" "admin-role" {
+  name = "admin-role"
 }
 
 module "glue" {
@@ -103,7 +107,7 @@ module "glue" {
 
   enable_glue_crawler = true
   glue_crawler_name   = ""
-  glue_crawler_role   = "arn:aws:iam::167127734783:role/admin-role"
+  glue_crawler_role   = data.aws_iam_role.admin-role.arn
 
   enable_glue_security_configuration = false
   glue_security_configuration_name   = ""
@@ -115,13 +119,13 @@ module "glue" {
   enable_glue_trigger = true
   glue_trigger_actions = [
     {
-      trigger_name   = ""
+      trigger_name = ""
     }
   ]
 
   enable_glue_job                 = true
   glue_job_name                   = ""
-  glue_job_role_arn               = "arn:aws:iam::167127734783:role/admin-role"
+  glue_job_role_arn               = data.aws_iam_role.admin-role.arn
   glue_job_additional_connections = []
   glue_job_execution_property = [{
     max_concurrent_runs = 2
@@ -140,6 +144,7 @@ module "glue" {
     "Createdby", "Vitalii Natarov"
   )
 }
+
 ```
 
 ## Module Input Variables
