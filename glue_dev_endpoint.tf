@@ -25,7 +25,7 @@ resource "aws_glue_dev_endpoint" "glue_dev_endpoint" {
     {
       Name = var.glue_dev_endpoint_name != "" ? lower(var.glue_dev_endpoint_name) : "${lower(var.name)}-glue-dev-endpoint-${lower(var.environment)}"
     },
-    var.tags
+    module.aws_user_tags.tags
   )
 
   lifecycle {

@@ -127,8 +127,7 @@ module "glue" {
   ]
 
   tags = map(
-    "Env", "stage",
-    "Orchestration", "Terraform",
-    "Createdby", "Vitalii Natarov"
+    "cost-center", "00-00000.000.01",
+    "Project", "My Test Glue Project"
   )
 }

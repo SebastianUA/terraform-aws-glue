@@ -52,7 +52,7 @@ resource "aws_glue_trigger" "glue_trigger" {
     {
       Name = var.glue_trigger_name != "" ? lower(var.glue_trigger_name) : "${lower(var.name)}-glue-trigger-${lower(var.environment)}"
     },
-    var.tags
+    module.aws_user_tags.tags
   )
 
   lifecycle {
