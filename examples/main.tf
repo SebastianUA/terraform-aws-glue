@@ -175,7 +175,7 @@ resource "aws_s3_bucket_object" "jobs_object" {
 
 # terraform-aws-glue module
 module "glue" {
-  source      = "/Users/gregorymirsky/terraform-aws-glue"
+  source      = "../modules/terraform-aws-glue"
   name        = "TEST"
   environment = "STAGE"
   # AWS Glue catalog DB
