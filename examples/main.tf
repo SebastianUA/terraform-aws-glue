@@ -136,7 +136,7 @@ data "aws_iam_role" "admin-role" {
 
 # Create glue catalog bucket (account_id ensures unique name across accounts)
 resource "aws_s3_bucket" "glue_catalog" {
-  bucket = "glue_catalog-${data.aws_caller_identity.current.account_id}" 
+  bucket = "glue_catalog-${data.aws_caller_identity.current.account_id}"
   acl    = "private"
   tags   = var.example_tags
 }
