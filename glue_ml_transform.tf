@@ -47,7 +47,7 @@ resource "aws_glue_ml_transform" "glue_ml_transform" {
     {
       Name = var.glue_ml_transform_name != "" ? lower(var.glue_ml_transform_name) : "${lower(var.name)}-glue-ml-transform-${lower(var.environment)}"
     },
-    var.tags
+    module.aws_user_tags.tags
   )
 
   lifecycle {

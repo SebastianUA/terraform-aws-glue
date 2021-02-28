@@ -49,7 +49,7 @@ resource "aws_glue_job" "glue_job" {
     {
       Name = var.glue_job_name != "" ? lower(var.glue_job_name) : "${lower(var.name)}-glue-job-${lower(var.environment)}"
     },
-    var.tags
+    module.aws_user_tags.tags
   )
 
   lifecycle {
