@@ -10,7 +10,6 @@ provider "aws" {
   shared_credentials_file = pathexpand("~/.aws/credentials")
 }
 
-
 module "aws_user_tags" {
   source = "./aws_user_tags"
 
@@ -126,16 +125,15 @@ module "s3_private_glue_catalog" {
 
   # Create test folder in the bucket
   enable_s3_bucket_object = true
-  s3_bucket_object_source = [
-    // "/test"
+  s3_bucket_object_stack  = [
+    {
+      key = "/catalog"
+    }  
   ]
 
   tags = merge(
     module.aws_user_tags.tags,
-    map(
-      "cost-center", "00-00000.000.01",
-      "Project", "My Test Glue Project"
-    )
+    var.example_tags
   )
 }
 
@@ -152,16 +150,15 @@ module "s3_private_glue_crawler" {
 
   # Create crawler folder in the bucket
   enable_s3_bucket_object = true
-  s3_bucket_object_source = [
-    // "/crawler"
+  s3_bucket_object_stack  = [
+    {
+      key = "/crawler"
+    }  
   ]
 
   tags = merge(
     module.aws_user_tags.tags,
-    map(
-      "cost-center", "00-00000.000.01",
-      "Project", "My Test Glue Project"
-    )
+    var.example_tags
   )
 }
 
@@ -178,16 +175,15 @@ module "s3_private_glue_jobs" {
 
   # Create crawler folder in the bucket
   enable_s3_bucket_object = true
-  s3_bucket_object_source = [
-    // "/jobs"
+  s3_bucket_object_stack  = [
+    {
+      key = "/jobs"
+    }  
   ]
 
   tags = merge(
     module.aws_user_tags.tags,
-    map(
-      "cost-center", "00-00000.000.01",
-      "Project", "My Test Glue Project"
-    )
+    var.example_tags
   )
 }
 
@@ -282,7 +278,7 @@ module "glue" {
       exclusions = []
     }
   ]
-
+  
   enable_glue_job                 = true
   glue_job_name                   = ""
   glue_job_role_arn               = module.glue_example_admin_role.iam_role_arn
@@ -300,10 +296,7 @@ module "glue" {
   ]
   tags = merge(
     module.aws_user_tags.tags,
-    map(
-      "cost-center", "00-00000.000.01",
-      "Project", "My Test Glue Project"
-    )
+    var.example_tags
   )
 
   depends_on = [
@@ -317,23 +310,20 @@ module "glue_trigger" {
   environment = "STAGE"
 
   enable_glue_trigger = true
-  glue_trigger_name   = ""
+  glue_trigger_name = ""
   glue_trigger_actions = [
     {
       # Both JobName or CrawlerName cannot be set together in an action
       crawler_name = module.glue.glue_crawler_id # null
-      job_name     = null                        # module.glue.glue_job_id
+      job_name     = null # module.glue.glue_job_id
       arguments    = null
       timeout      = null
     }
   ]
-
+  
   tags = merge(
     module.aws_user_tags.tags,
-    map(
-      "cost-center", "00-00000.000.01",
-      "Project", "My Test Glue Project"
-    )
+    var.example_tags
   )
 
   depends_on = [
