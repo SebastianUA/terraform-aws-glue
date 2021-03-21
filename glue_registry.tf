@@ -12,7 +12,7 @@ resource "aws_glue_registry" "glue_registry" {
     {
       Name = var.glue_registry_name != "" ? lower(var.glue_registry_name) : "${lower(var.name)}-glue-registry-${lower(var.environment)}"
     },
-    module.aws_user_tags.tags
+    var.tags
   )
 
   lifecycle {

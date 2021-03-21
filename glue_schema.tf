@@ -16,7 +16,7 @@ resource "aws_glue_schema" "glue_schema" {
     {
       Name = var.glue_schema_name != "" ? lower(var.glue_schema_name) : "${lower(var.name)}-glue-schema-${lower(var.environment)}"
     },
-    module.aws_user_tags.tags
+    var.tags
   )
 
   lifecycle {

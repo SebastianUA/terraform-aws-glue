@@ -10,6 +10,5 @@ variable "environment" {
 variable "custom_tags" {
   type        = map(string)
   description = "Custom AWS tags provided by the user"
-  default = {
-  }
+  default     = {}
 }
