@@ -296,6 +296,11 @@ variable "glue_crawler_catalog_target" {
   default     = []
 }
 
+variable "glue_crawler_recrawl_behavior" {
+  description = "(Optional) Policy for the crawler to repeat crawls of S3 data stores. Valid values CRAWL_EVERYTHING and CRAWL_NEW_FOLDERS_ONLY. Default value is CRAWL_EVERYTHING. "
+  default     = "CRAWL_EVERYTHING"
+}
+
 variable "glue_crawler_schema_change_policy" {
   description = "(Optional) Policy for the crawler's update and deletion behavior."
   default     = []

@@ -67,6 +67,10 @@ resource "aws_glue_crawler" "glue_crawler" {
     var.tags
   )
 
+  recrawl_policy {
+     recrawl_behavior = var.glue_crawler_recrawl_behavior
+  }
+
   lifecycle {
     create_before_destroy = true
     ignore_changes        = []
