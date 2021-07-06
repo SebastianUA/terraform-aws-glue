@@ -14,13 +14,14 @@ Import the module and retrieve with ```terraform get``` or ```terraform get --up
 # MAINTAINER Vitaliy Natarov "vitaliy.natarov@yahoo.com"
 #
 terraform {
-  required_version = "~> 0.14"
+  required_version = "~> 1.0"
 }
 
 provider "aws" {
   region                  = "us-east-1"
   shared_credentials_file = pathexpand("~/.aws/credentials")
 }
+
 
 module "aws_user_tags" {
   source = "./aws_user_tags"
@@ -124,7 +125,6 @@ module "glue_example_admin_role" {
   ]
 }
 
-# Create glue catalog bucket (account_id ensures unique name across accounts)
 module "s3_private_glue_catalog" {
   source      = "git@github.com:SebastianUA/terraform.git//aws/modules/s3?ref=master"
   name        = "test"
@@ -137,10 +137,10 @@ module "s3_private_glue_catalog" {
 
   # Create test folder in the bucket
   enable_s3_bucket_object = true
-  s3_bucket_object_stack  = [
+  s3_bucket_object_stack = [
     {
       key = "/catalog"
-    }  
+    }
   ]
 
   tags = merge(
@@ -162,10 +162,10 @@ module "s3_private_glue_crawler" {
 
   # Create crawler folder in the bucket
   enable_s3_bucket_object = true
-  s3_bucket_object_stack  = [
+  s3_bucket_object_stack = [
     {
       key = "/crawler"
-    }  
+    }
   ]
 
   tags = merge(
@@ -187,10 +187,10 @@ module "s3_private_glue_jobs" {
 
   # Create crawler folder in the bucket
   enable_s3_bucket_object = true
-  s3_bucket_object_stack  = [
+  s3_bucket_object_stack = [
     {
       key = "/jobs"
-    }  
+    }
   ]
 
   tags = merge(
@@ -212,7 +212,7 @@ module "random_glue_connection_password" {
 
 # terraform-aws-glue module
 module "glue" {
-  source      = "../"
+  source      = "../../modules/glue"
   name        = "TEST"
   environment = "STAGE"
   # AWS Glue catalog DB
@@ -256,14 +256,14 @@ module "glue" {
     {
       ser_de_info_name                  = "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
       ser_de_info_serialization_library = "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
-      ser_de_info_parameters            = map("field.delim", ",")
+      ser_de_info_parameters            = tomap({ "field.delim" = "," })
     }
   ]
   storage_descriptor_skewed_info = [
     {
       ser_de_info_name                  = "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
       ser_de_info_serialization_library = "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
-      ser_de_info_parameters            = map("field.delim", ",")
+      ser_de_info_parameters            = tomap({ "field.delim" = "," })
     }
   ]
   storage_descriptor_sort_columns = []
@@ -290,7 +290,7 @@ module "glue" {
       exclusions = []
     }
   ]
-  
+
   enable_glue_job                 = true
   glue_job_name                   = ""
   glue_job_role_arn               = module.glue_example_admin_role.iam_role_arn
@@ -308,7 +308,10 @@ module "glue" {
   ]
   tags = merge(
     module.aws_user_tags.tags,
-    var.example_tags
+    tomap({
+      "cost-center" = "00-00000.000.01",
+      "Project"     = "My Test Glue Project"
+    })
   )
 
   depends_on = [
@@ -317,25 +320,28 @@ module "glue" {
 }
 
 module "glue_trigger" {
-  source      = "../"
+  source      = "../../modules/glue"
   name        = "TEST"
   environment = "STAGE"
 
   enable_glue_trigger = true
-  glue_trigger_name = ""
+  glue_trigger_name   = ""
   glue_trigger_actions = [
     {
       # Both JobName or CrawlerName cannot be set together in an action
       crawler_name = module.glue.glue_crawler_id # null
-      job_name     = null # module.glue.glue_job_id
+      job_name     = null                        # module.glue.glue_job_id
       arguments    = null
       timeout      = null
     }
   ]
-  
+
   tags = merge(
     module.aws_user_tags.tags,
-    var.example_tags
+    tomap({
+      "cost-center" = "00-00000.000.01",
+      "Project"     = "My Test Glue Project"
+    })
   )
 
   depends_on = [
@@ -402,6 +408,9 @@ module "glue_trigger" {
 - `glue_crawler_s3_target` - (Optional) List nested Amazon S3 target arguments. (`default = []`)
 - `glue_crawler_catalog_target` - (Optional) List nested Amazon catalog target arguments. (`default = []`)
 - `glue_crawler_schema_change_policy` - (Optional) Policy for the crawler's update and deletion behavior. (`default = []`)
+- `glue_crawler_recrawl_policy` - Optional) A policy that specifies whether to crawl the entire dataset again, or to crawl only folders that were added since the last crawler run. (`default = []`)
+- `glue_crawler_mongodb_target` - (Optional) List nested MongoDB target arguments. (`default = []`)
+- `glue_crawler_lineage_configuration` - (Optional) Specifies data lineage configuration settings for the crawler. (`default = []`)
 - `enable_glue_security_configuration` - Enable glue security configuration usage (`default = False`)
 - `glue_security_configuration_name` - Name of the security configuration. (`default = ""`)
 - `glue_security_configuration_cloudwatch_encryption` - (Required) A cloudwatch_encryption block as described below, which contains encryption configuration for CloudWatch. (`default = []`)

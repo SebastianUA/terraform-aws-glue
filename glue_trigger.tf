@@ -15,6 +15,7 @@ resource "aws_glue_trigger" "glue_trigger" {
   dynamic "actions" {
     iterator = actions
     for_each = var.glue_trigger_actions
+
     content {
       arguments = lookup(actions.value, "arguments", null)
       # Both JobName or CrawlerName cannot be set together in an action
@@ -27,14 +28,21 @@ resource "aws_glue_trigger" "glue_trigger" {
   dynamic "predicate" {
     iterator = predicate
     for_each = var.glue_trigger_predicate
+
     content {
-      logical = lookup(predicate.value, "logical", "AND")
-      conditions {
-        job_name         = lookup(predicate.value, "job_name", null)
-        state            = lookup(predicate.value, "state", null)
-        crawler_name     = lookup(predicate.value, "crawler_name", null)
-        crawl_state      = lookup(predicate.value, "crawl_state", null)
-        logical_operator = lookup(predicate.value, "logical_operator", null)
+      logical = lookup(predicate.value, "logical", null)
+
+      dynamic "conditions" {
+        iterator = conditions
+        for_each = length(keys(lookup(predicate.value, "conditions", {}))) > 0 ? [lookup(predicate.value, "conditions", {})] : []
+
+        content {
+          job_name         = lookup(conditions.value, "job_name", null)
+          state            = lookup(conditions.value, "state", null)
+          crawler_name     = lookup(conditions.value, "crawler_name", null)
+          crawl_state      = lookup(conditions.value, "crawl_state", null)
+          logical_operator = lookup(conditions.value, "logical_operator", null)
+        }
       }
     }
   }
@@ -42,6 +50,7 @@ resource "aws_glue_trigger" "glue_trigger" {
   dynamic "timeouts" {
     iterator = timeouts
     for_each = var.glue_trigger_timeouts
+
     content {
       create = lookup(timeouts.value, "create", null)
       delete = lookup(timeouts.value, "delete", null)
