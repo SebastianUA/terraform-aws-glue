@@ -368,7 +368,8 @@ module "glue_trigger" {
     module.glue,
     module.aws_user_tags
   ]
-}```
+}
+```
 
 ## Module Input Variables
 ----------------------
