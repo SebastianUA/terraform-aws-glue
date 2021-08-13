@@ -95,15 +95,6 @@ resource "aws_glue_crawler" "glue_crawler" {
     }
   }
 
-  dynamic "schema_change_policy" {
-    iterator = schema_change_policy
-    for_each = var.glue_crawler_schema_change_policy
-
-    content {
-      recrawl_behavior = lookup(schema_change_policy.value, "recrawl_behavior", null)
-    }
-  }
-
   tags = merge(
     {
       Name = var.glue_crawler_name != "" ? lower(var.glue_crawler_name) : "${lower(var.name)}-glue-crawler-${lower(var.environment)}"
