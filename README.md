@@ -579,7 +579,7 @@ module "glue_trigger" {
 - `glue_schema_schema_checkpoint` - The version number of the checkpoint (the last time the compatibility mode was changed).
 - `glue_user_defined_function_id` - The id of the Glue User Defined Function.
 - `glue_user_defined_function_arn` - The ARN of the Glue User Defined Function.
-- `glue_user_defined_function_create_date` - The time at which the function was created.
+- `glue_user_defined_function_create_time` - The time at which the function was created.
 
 
 ## Authors
