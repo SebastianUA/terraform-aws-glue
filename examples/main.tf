@@ -203,7 +203,7 @@ module "glue" {
   source      = "../"
   name        = "TEST"
   environment = "STAGE"
-  
+
   # AWS Glue catalog DB
   enable_glue_catalog_database     = true
   glue_catalog_database_name       = "test-glue-db-${data.aws_caller_identity.current.account_id}"
