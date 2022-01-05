@@ -39,7 +39,7 @@ resource "aws_glue_catalog_table" "glue_catalog_table" {
 
     dynamic "columns" {
       iterator = columns
-      for_each = var.storage_descriptor_columns
+      for_each = lookup(var.glue_catalog_table_storage_descriptor, "columns", [])
 
       content {
         name    = lookup(columns.value, "columns_name", null)
@@ -50,7 +50,7 @@ resource "aws_glue_catalog_table" "glue_catalog_table" {
 
     dynamic "ser_de_info" {
       iterator = ser_de_info
-      for_each = var.storage_descriptor_ser_de_info
+      for_each = lookup(var.glue_catalog_table_storage_descriptor, "ser_de_info", [])
 
       content {
         name                  = lookup(ser_de_info.value, "ser_de_info_name", null)
@@ -61,7 +61,7 @@ resource "aws_glue_catalog_table" "glue_catalog_table" {
 
     dynamic "sort_columns" {
       iterator = sort_columns
-      for_each = var.storage_descriptor_sort_columns
+      for_each = lookup(var.glue_catalog_table_storage_descriptor, "sort_columns", [])
 
       content {
         column     = lookup(sort_columns.value, "sort_columns_column", null)
@@ -71,7 +71,7 @@ resource "aws_glue_catalog_table" "glue_catalog_table" {
 
     dynamic "skewed_info" {
       iterator = skewed_info
-      for_each = var.storage_descriptor_skewed_info
+      for_each = lookup(var.glue_catalog_table_storage_descriptor, "skewed_info", [])
 
       content {
         skewed_column_names               = lookup(skewed_info.value, "skewed_info_skewed_column_names", null)

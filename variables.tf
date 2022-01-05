@@ -127,26 +127,6 @@ variable "glue_catalog_table_storage_descriptor" {
   }
 }
 
-variable "storage_descriptor_columns" {
-  description = "(Optional) A list of the Columns in the table."
-  default     = []
-}
-
-variable "storage_descriptor_ser_de_info" {
-  description = "(Optional) Serialization/deserialization (SerDe) information."
-  default     = []
-}
-
-variable "storage_descriptor_sort_columns" {
-  description = "(Optional) A list of Order objects specifying the sort order of each bucket in the table."
-  default     = []
-}
-
-variable "storage_descriptor_skewed_info" {
-  description = "(Optional) Information about values that appear very frequently in a column (skewed values)."
-  default     = []
-}
-
 #---------------------------------------------------
 # AWS Glue classifier
 #---------------------------------------------------
@@ -329,19 +309,9 @@ variable "glue_security_configuration_name" {
   default     = ""
 }
 
-variable "glue_security_configuration_cloudwatch_encryption" {
-  description = "(Required) A cloudwatch_encryption block as described below, which contains encryption configuration for CloudWatch."
-  default     = []
-}
-
-variable "glue_security_configuration_job_bookmarks_encryption" {
-  description = "(Required) A job_bookmarks_encryption block as described below, which contains encryption configuration for job bookmarks."
-  default     = []
-}
-
-variable "glue_security_configuration_s3_encryption" {
-  description = "(Required) A s3_encryption block as described below, which contains encryption configuration for S3 data."
-  default     = []
+variable "glue_security_configuration_encryption_configuration" {
+  description = "Set encryption configuration for Glue security configuration"
+  default     = {}
 }
 
 #---------------------------------------------------
@@ -518,14 +488,9 @@ variable "enable_glue_data_catalog_encryption_settings" {
   default     = false
 }
 
-variable "glue_data_catalog_encryption_settings_connection_password_encryption" {
-  description = "(Required) When connection password protection is enabled, the Data Catalog uses a customer-provided key to encrypt the password as part of CreateConnection or UpdateConnection and store it in the ENCRYPTED_PASSWORD field in the connection properties. You can enable catalog encryption or only password encryption. see Connection Password Encryption."
-  default     = []
-}
-
-variable "glue_data_catalog_encryption_settings_encryption_at_rest" {
-  description = "(Required) Specifies the encryption-at-rest configuration for the Data Catalog. see Encryption At Rest."
-  default     = []
+variable "glue_data_catalog_encryption_settings_data_catalog_encryption_settings" {
+  description = "Set data_catalog_encryption_settings block for Glue data catalog encryption"
+  default     = {}
 }
 
 variable "glue_data_catalog_encryption_settings_catalog_id" {
@@ -705,26 +670,6 @@ variable "glue_partition_catalog_id" {
 variable "glue_partition_parameters" {
   description = "(Optional) Properties associated with this table, as a list of key-value pairs."
   default     = null
-}
-
-variable "glue_partition_storage_descriptor_columns" {
-  description = "(Optional) A list of the Columns in the table."
-  default     = []
-}
-
-variable "glue_partition_storage_descriptor_ser_de_info" {
-  description = "(Optional) Serialization/deserialization (SerDe) information."
-  default     = []
-}
-
-variable "glue_partition_storage_descriptor_sort_columns" {
-  description = "(Optional) A list of Order objects specifying the sort order of each bucket in the table."
-  default     = []
-}
-
-variable "glue_partition_storage_descriptor_skewed_info" {
-  description = "(Optional) Information about values that appear very frequently in a column (skewed values)."
-  default     = []
 }
 
 variable "glue_partition_storage_descriptor" {
